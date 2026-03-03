@@ -13,7 +13,7 @@ class BasePage:
     - type text
     - dismiss permission pop-ups
     """
-    
+
 
     # Common Android permission dialog button IDs
     PERMISSION_ALLOW_IDS = [
@@ -24,7 +24,7 @@ class BasePage:
     PERMISSION_DENY_ID = "com.android.permissioncontroller:id/permission_deny_button"
 
     def __init__(self, driver):
-        # Initialize driver and default explicit wait
+        # Initialize driver and default explicit wait 
         self.driver = driver
         self.wait = WebDriverWait(driver, DEFAULT_WAIT)
 
