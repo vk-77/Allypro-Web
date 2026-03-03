@@ -13,6 +13,7 @@ class BasePage:
     - type text
     - dismiss permission pop-ups
     """
+    
 
     # Common Android permission dialog button IDs
     PERMISSION_ALLOW_IDS = [
