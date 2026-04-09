@@ -1,15 +1,16 @@
 """
-Page object for the Elements Receivables pages (Payment Batches, Auto Apply, Management).
+Receivables page object for Payment Batches, Auto Apply, and Management.
+
+Covers batch loading, auto-apply operations, receivables templates,
+statements, messaging, and data export.
 """
 from selenium.webdriver.common.by import By
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 
 
-class ReceivablesPage(BaseWebPage):
-    """
-    Page object for Receivables section pages.
-    """
+class ReceivablesPage(BasePage):
+    """Page object for Payment Batches, Auto Apply, and Receivables Management."""
 
     # ── Locators ──────────────────────────────────────────────────
 

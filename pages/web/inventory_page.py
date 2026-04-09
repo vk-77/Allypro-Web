@@ -1,15 +1,16 @@
 """
-Page object for the Elements Inventory pages.
+Inventory page object for equipment search, add, move, and detail views.
+
+Provides helpers for serial-number search, inventory creation, yard
+moves, and equipment detail/history inspection.
 """
 from selenium.webdriver.common.by import By
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 
 
-class InventoryPage(BaseWebPage):
-    """
-    Page object for Inventory Search page.
-    """
+class InventoryPage(BasePage):
+    """Page object for Inventory search and equipment management."""
 
     # ── Locators ──────────────────────────────────────────────────
 

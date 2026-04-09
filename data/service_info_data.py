@@ -1,5 +1,5 @@
 """
-Service info test data — migrated from Cypress fixtures/serviceInfoData.json.
+Service Info test data used by the Update Service / View History tests.
 """
 
 SERVICE_INFO_DATA = {

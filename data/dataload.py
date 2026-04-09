@@ -1,7 +1,8 @@
 """
-Centralized test data — migrated from Cypress dataload.js.
+Shared test data: credentials and computed date values.
 
-Provides account credentials, supervisor credentials, and dynamic date helpers.
+Exports ``account``, ``supervisor``, and ``dates`` dictionaries consumed
+by fixtures and test modules throughout the suite.
 """
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta

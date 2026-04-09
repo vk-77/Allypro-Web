@@ -1,5 +1,1 @@
-"""
-Root-level pytest conftest.
-All web test fixtures live in tests/web/conftest.py.
-This file is intentionally minimal.
-"""
+"""Root-level conftest. Web fixtures live in tests/web/conftest.py."""

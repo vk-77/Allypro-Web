@@ -1,16 +1,17 @@
 """
-Page object for the Elements Operations pages (Routing Queue).
+Operations page object for Routing Queue and Routing Assignment.
+
+Handles sub-page navigation, queue table verification, and route
+assignment workflows.
 """
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 
 
-class OperationsPage(BaseWebPage):
-    """
-    Page object for Operations section pages.
-    """
+class OperationsPage(BasePage):
+    """Page object for Routing Queue and Routing Assignment pages."""
 
     # ── Locators ──────────────────────────────────────────────────
 

@@ -1,14 +1,14 @@
 """
-Shared fixtures for tests that require an authenticated session.
+Fixtures for tests that require an authenticated session.
 
-Import this conftest in test modules that need a logged-in state.
-These fixtures provide a driver already on the home page after login.
+Provides a session-scoped logged-in driver and a per-test reset
+that navigates back to the Home page before each test.
 """
 import pytest
 
 from config.web_settings import BASE_URL, COMPANY, USERNAME, PASSWORD
 from drivers.web_driver import create_web_driver
-from pages.web.login_page import WebLoginPage
+from pages.web.login_page import LoginPage
 from helpers.web_helper import wait_for_loading_screen
 
 
@@ -16,14 +16,12 @@ from helpers.web_helper import wait_for_loading_screen
 def logged_in_driver():
     """
     Session-scoped driver that logs in once and reuses the session.
-
-    Mirrors the Cypress cy.loginWithApiChecks() + cy.session() pattern.
     """
     driver = create_web_driver()
     driver.get(BASE_URL)
     wait_for_loading_screen(driver)
 
-    login_page = WebLoginPage(driver)
+    login_page = LoginPage(driver)
     login_page.login(COMPANY, USERNAME, PASSWORD)
 
     yield driver

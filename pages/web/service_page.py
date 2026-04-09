@@ -1,7 +1,8 @@
 """
-Page object for the Elements Service pages.
+Service page object for Update Service and Reassign Services.
 
-Handles Update Service flow and Reassign Services operations.
+Covers the multi-step Update Service wizard, routing assignment,
+and the Reassign Services filter/process workflow.
 """
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -9,16 +10,12 @@ from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 from config.web_settings import BASE_URL, DEFAULT_WAIT
 
 
-class ServicePage(BaseWebPage):
-    """
-    Page object for Service-related operations:
-    - Update Service wizard
-    - Reassign Services page
-    """
+class ServicePage(BasePage):
+    """Page object for Update Service and Reassign Services operations."""
 
     # ── Customer Details / Service locators ─────────────────────────
     PAGE_TITLE = (By.CSS_SELECTOR, "#content p.pageTitle")
@@ -125,10 +122,7 @@ class ServicePage(BaseWebPage):
     # ── Navigation helpers ──────────────────────────────────────────
 
     def select_recently_viewed_customer(self, customer_id):
-        """
-        Select a customer from Recently Viewed by ID.
-        Falls back to clicking the first recently viewed link.
-        """
+        """Select a customer from Recently Viewed by ID, with fallbacks."""
         self.wait_for_loading_screen()
         try:
             self.find_visible(*self.RECENTLY_VIEWED_SECTION, timeout=10)
@@ -160,10 +154,7 @@ class ServicePage(BaseWebPage):
         self.wait_for_loading_screen()
 
     def add_new_service_from_customer_details(self):
-        """
-        Run the Add New Service wizard from Customer Details.
-        Mirrors Cypress addNewServiceFromCustomerDetails command.
-        """
+        """Run the Add New Service wizard from Customer Details."""
         wait = WebDriverWait(self.driver, 20)
 
         # Scroll to Services section and click Add Service link

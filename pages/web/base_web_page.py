@@ -1,7 +1,8 @@
 """
-Base page object for Elements web application (browser).
+Base page object shared by every page in the Elements test suite.
 
-Provides common Selenium WebDriver actions with CSS/XPath selectors.
+Wraps common Selenium operations (find, click, type, wait) so individual
+page objects only need to declare locators and page-specific actions.
 """
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,15 +12,8 @@ from selenium.common.exceptions import TimeoutException, StaleElementReferenceEx
 from config.web_settings import DEFAULT_WAIT, LOADING_SCREEN_TIMEOUT
 
 
-class BaseWebPage:
-    """
-    Base class with common Selenium browser actions:
-    - wait for elements
-    - click elements
-    - type text
-    - wait for loading screen
-    - clear session storage
-    """
+class BasePage:
+    """Base class providing shared Selenium helpers for all page objects."""
 
     LOADING_SCREEN_SELECTOR = "[class^='progressImage']"
 
@@ -123,16 +117,20 @@ class BaseWebPage:
         """
         Wait until the loading screen (progressImage) is gone.
 
-        Matches Cypress waitForLoadingScreen: passes when the element
-        either does not exist in the DOM or is not visible.
+        Also dismisses any Chrome security popups (password breach
+        warnings, etc.) that may overlay the application.
         """
+        from helpers.web_helper import dismiss_security_popup
+
         timeout = timeout or LOADING_SCREEN_TIMEOUT
+        dismiss_security_popup(self.driver)
         try:
             WebDriverWait(self.driver, timeout).until(
                 lambda d: not self._is_loader_visible()
             )
         except TimeoutException:
-            pass  # Loader may never appear for fast responses
+            pass
+        dismiss_security_popup(self.driver)
 
     def _is_loader_visible(self):
         """Return True if the loading overlay is currently visible."""

@@ -1,8 +1,10 @@
 """
-Page object for the Elements Customer Details page.
+Customer Details page object and all sub-section helpers.
 
-Handles navigation to customer details, tab switching, and common
-customer detail operations.
+Covers tab navigation (Contacts, Service Activity, Account Activity,
+Transactions, Audit, Documents, Pricing), Customer Settings, the
+Services list, Service Info panels, Add Service wizard, and the
+Service Activity calendar / work-order modal interactions.
 """
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -10,14 +12,12 @@ from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 from config.web_settings import BASE_URL
 
 
-class CustomerPage(BaseWebPage):
-    """
-    Page object for Customer Details and sub-pages.
-    """
+class CustomerPage(BasePage):
+    """Page object for Customer Details and all sub-sections."""
 
     # ── Locators ──────────────────────────────────────────────────
 
@@ -144,10 +144,7 @@ class CustomerPage(BaseWebPage):
     # ── Navigation ────────────────────────────────────────────────
 
     def open_customer_details_page(self):
-        """
-        Navigate to Customer Details via Recently Viewed (mirrors Cypress openCustomerDetailsPage).
-        Falls back to direct URL if recently viewed is empty.
-        """
+        """Navigate to Customer Details via Recently Viewed, with URL fallback."""
         self.driver.get(BASE_URL)
         self.wait_for_loading_screen()
         self._ensure_recently_viewed_visible()
@@ -416,7 +413,9 @@ class CustomerPage(BaseWebPage):
         """Return the panel parent element for a Service Info heading."""
         for sel in self.PANEL_PARENT_CSS.split(","):
             try:
-                panel = heading.find_element(By.XPATH, f"./ancestor::{sel.strip().replace('.', '[@contains(@class,\"')}"[:-1] + '"]')
+                cls_name = sel.strip().lstrip(".")
+                xpath = "./ancestor::*[contains(@class,'{}')]".format(cls_name)
+                panel = heading.find_element(By.XPATH, xpath)
                 return panel
             except NoSuchElementException:
                 continue
@@ -567,10 +566,7 @@ class CustomerPage(BaseWebPage):
         self._run_service_info_menu_flow("last", "Transfer Service", "#modalSerivceTransfer")
 
     def add_new_service_from_customer_details(self, requested_by=None):
-        """
-        Run the Add Service wizard (mirrors Cypress addNewServiceFromCustomerDetails).
-        Creates a new service with default values and waits for success.
-        """
+        """Run the Add Service wizard to create a new service with default values."""
         from helpers.web_helper import wait_for_loading_screen as _wfls, select2_select
         from data.user_data import USER_DATA
 

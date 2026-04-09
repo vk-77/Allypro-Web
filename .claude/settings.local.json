@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cd \"C:/Users/tpss/Desktop/Automation/Elements App\" && mkdir -p tests/web/test_01_1_customer_pages tests/web/test_03_orders tests/web/test_04_service tests/web/test_05_dispatch tests/web/test_06_billing tests/web/test_07_operations tests/web/test_08_receivables tests/web/test_09_inventory)"
+      "Bash(cd \"C:/Users/tpss/Desktop/Automation/Elements App\" && mkdir -p tests/web/test_01_1_customer_pages tests/web/test_03_orders tests/web/test_04_service tests/web/test_05_dispatch tests/web/test_06_billing tests/web/test_07_operations tests/web/test_08_receivables tests/web/test_09_inventory)",
+      "Bash(dir:*)",
+      "Bash(python:*)"
     ]
   }
 }

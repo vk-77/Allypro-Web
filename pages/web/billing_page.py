@@ -1,5 +1,8 @@
 """
-Page object for the Elements Billing pages (Batches, Pre-Billing, General Ledger).
+Billing page object covering Batches, Pre-Billing, and General Ledger.
+
+Manages the full batch lifecycle (create, process, compare, finalize,
+void/reverse) and provides helpers for GL exports and pre-billing audits.
 """
 import re
 from datetime import datetime
@@ -10,14 +13,12 @@ from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 from config.web_settings import DEFAULT_WAIT
 
 
-class BillingPage(BaseWebPage):
-    """
-    Page object for Billing section pages.
-    """
+class BillingPage(BasePage):
+    """Page object for Batches, Pre-Billing, and General Ledger pages."""
 
     # ── Locators ──────────────────────────────────────────────────
 

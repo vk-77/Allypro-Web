@@ -1,8 +1,8 @@
 """
-Web helper utilities for Elements browser testing.
+Standalone Selenium helper functions.
 
-Provides reusable functions for common operations like menu navigation,
-Select2 dropdown interaction, date range selection, and grid operations.
+Reusable utilities for menu navigation, Select2/native dropdowns,
+date pickers, loading-screen waits, text checks, and DOM helpers.
 """
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -15,16 +15,68 @@ from config.web_settings import DEFAULT_WAIT, LOADING_SCREEN_TIMEOUT
 
 LOADING_SCREEN_SELECTOR = "[class^='progressImage']"
 
+# Selectors for Chrome security / breach-warning popups that can appear
+# over the application (e.g., "Change your password", "Check passwords").
+_SECURITY_POPUP_SELECTORS = [
+    # Generic modal dismiss buttons (OK, Got it, Close, Dismiss, Not now)
+    "button[aria-label='OK']",
+    "button[aria-label='Got it']",
+    "button[aria-label='Close']",
+    # Common Chrome breach-alert / password-change dialog buttons
+    "[class*='password'] button.action-button",
+    "[class*='breach'] button",
+    # Bootstrap / app-level modals that look like security warnings
+    ".modal.show button[data-dismiss='modal']",
+    ".modal.in button[data-dismiss='modal']",
+]
+
+
+def dismiss_security_popup(driver):
+    """Dismiss Chrome security popups (password breach warnings, etc.).
+
+    Checks for common popup patterns and clicks the dismiss/OK button.
+    Silently does nothing if no popup is found.
+    """
+    # 1. Handle native browser alert dialogs
+    try:
+        alert = driver.switch_to.alert
+        alert.dismiss()
+        return
+    except Exception:
+        pass
+
+    # 2. Handle DOM-based popups (breach warnings, modals)
+    for selector in _SECURITY_POPUP_SELECTORS:
+        try:
+            buttons = driver.find_elements(By.CSS_SELECTOR, selector)
+            for btn in buttons:
+                if btn.is_displayed():
+                    driver.execute_script("arguments[0].click();", btn)
+                    return
+        except Exception:
+            continue
+
 
 def wait_for_loading_screen(driver, timeout=None):
-    """Wait until the loading screen (progressImage) is gone."""
+    """Wait until the loading screen (progressImage) is gone.
+
+    Also dismisses any Chrome security popups that may have appeared
+    during page load (e.g., password breach warnings).
+    """
     timeout = timeout or LOADING_SCREEN_TIMEOUT
+
+    # Dismiss any security popup before waiting for the loader
+    dismiss_security_popup(driver)
+
     try:
         WebDriverWait(driver, timeout).until(
             lambda d: not _is_loader_visible(d)
         )
     except TimeoutException:
         pass
+
+    # Check again after the loader clears — popups sometimes appear late
+    dismiss_security_popup(driver)
 
 
 def _is_loader_visible(driver):
@@ -131,7 +183,7 @@ def select_dropdown_by_index(driver, selector, index):
 
 def select_date_range(driver, selector_from, selector_to, start_date, end_date):
     """
-    Set date range using JavaScript (mirrors Cypress selectDateRange command).
+    Set date range by injecting values via JavaScript.
 
     Args:
         driver: WebDriver instance

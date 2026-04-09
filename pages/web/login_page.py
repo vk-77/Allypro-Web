@@ -1,17 +1,16 @@
 """
-Page object for the Elements web login screen.
+Login page object for the Elements application.
+
+Handles credential entry, form submission, EULA interaction,
+and login-screen assertions used by the authentication tests.
 """
 from selenium.webdriver.common.by import By
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 
 
-class WebLoginPage(BaseWebPage):
-    """
-    Page object representing the Elements Login screen.
-
-    Locators and actions for company, email, password fields and login button.
-    """
+class LoginPage(BasePage):
+    """Page object for the Elements login screen."""
 
     # ── Locators ──────────────────────────────────────────────────
 

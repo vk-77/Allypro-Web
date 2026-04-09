@@ -1,17 +1,18 @@
 """
-Page object for the Elements Dispatch pages (Dispatch Map, Dispatch Board).
+Dispatch page object for the Dispatch Map and Dispatch Board.
+
+Provides helpers for map/board navigation, route filtering, work-order
+tab interaction, drag-and-drop, notes, and schedule management.
 """
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import Select
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 
 
-class DispatchPage(BaseWebPage):
-    """
-    Page object for Dispatch section pages.
-    """
+class DispatchPage(BasePage):
+    """Page object for Dispatch Map and Dispatch Board pages."""
 
     # ── Navigation locators ────────────────────────────────────────
     PAGE_TITLE = (By.CSS_SELECTOR, "#content p.pageTitle")
@@ -387,7 +388,7 @@ class DispatchPage(BaseWebPage):
         self.wait_for_loading_screen()
 
     def open_new_tab(self):
-        """Open a new tab and switch to it (mirrors cy.openNewTab)."""
+        """Open a new tab and switch to it."""
         self.driver.execute_script("window.open('about:blank','_blank');")
         handles = self.driver.window_handles
         self.driver.switch_to.window(handles[-1])

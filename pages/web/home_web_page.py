@@ -1,15 +1,16 @@
 """
-Page object for the Elements web Home / Dashboard screen (post-login).
+Home / Dashboard page object for the Elements application.
+
+Provides helpers to verify the landing page after login, read the
+page title, and interact with the User Info sidebar.
 """
 from selenium.webdriver.common.by import By
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 
 
-class HomeWebPage(BaseWebPage):
-    """
-    Page object for the Home page displayed after successful login.
-    """
+class HomePage(BasePage):
+    """Page object for the Elements Home / Dashboard screen."""
 
     # ── Locators ──────────────────────────────────────────────────
 

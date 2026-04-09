@@ -1,5 +1,8 @@
 """
-Test user data — migrated from Cypress fixtures/userData.json.
+Test data for the Elements web application.
+
+Contains customer, location, service, and payment details used across
+the Selenium-based regression suite.
 """
 
 USER_DATA = {
@@ -15,7 +18,7 @@ USER_DATA = {
     "company": "ALLYPRO",
     "assigned_user": "automation test MVC",
     "automation_user": "AutoMVC",
-    "email": "automation.test.mvc@email.ghostinspector.com",
+    "email": "automvc@allypro.test",
     "yeison_b": "YeisonB",
     "mobile": "1234567890",
     "payment": {

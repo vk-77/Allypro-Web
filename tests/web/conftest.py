@@ -1,9 +1,8 @@
 """
-Pytest fixtures for Elements web (browser) tests.
+Session-scoped WebDriver and per-test driver reset fixture.
 
-Provides session-scoped and function-scoped WebDriver fixtures.
-The function-scoped 'driver' fixture clears cookies/session and navigates
-to the base URL before each test, so every test starts from a clean login page.
+Each test gets a clean browser state (cookies/storage cleared,
+navigated to base URL) so it starts from the login page.
 """
 import pytest
 from selenium.webdriver.common.by import By

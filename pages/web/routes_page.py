@@ -1,15 +1,15 @@
 """
-Page object for the Elements Routes pages (Route Optimization, Route Log, Batch History).
+Routes page object for Route Optimization, Route Log, and Batch History.
+
+Provides navigation and data-grid helpers for the Routes section.
 """
 from selenium.webdriver.common.by import By
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 
 
-class RoutesPage(BaseWebPage):
-    """
-    Page object for Routes section pages.
-    """
+class RoutesPage(BasePage):
+    """Page object for Route Optimization, Route Log, and Batch History."""
 
     # ── Locators ──────────────────────────────────────────────────
 

@@ -1,6 +1,4 @@
-"""
-Web application settings for Elements browser testing.
-"""
+"""Environment-driven settings for the Elements browser test suite."""
 import os
 
 # Base URL
@@ -23,7 +21,7 @@ VIEWPORT_HEIGHT = 1000
 
 # Credentials
 COMPANY = os.environ.get("ELEMENTS_COMPANY", "allypro")
-USERNAME = os.environ.get("ELEMENTS_USER", "sparks@routeware.com")
+USERNAME = os.environ.get("ELEMENTS_USER", "vishal.kumar@routeware.com")
 PASSWORD = os.environ.get("ELEMENTS_PASS", "@llyPro$")
 
 # Supervisor credentials

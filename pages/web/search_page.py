@@ -1,20 +1,21 @@
 """
-Page object for the Elements Search page.
+Search page object for Global Search and Advanced Filters.
+
+Handles keyword search, result-grid verification, and advanced
+filter fields (customer ID, name, location, service, address).
 """
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from .base_web_page import BaseWebPage
+from .base_web_page import BasePage
 
 
-class SearchPage(BaseWebPage):
-    """
-    Page object for Search and Advanced Filter Search.
-    """
+class SearchPage(BasePage):
+    """Page object for Global Search and Advanced Filter Search."""
 
     # ── Locators ──────────────────────────────────────────────────
 
-    SEARCH_INPUT = (By.ID, "txtGlobalSearch")
+    SEARCH_INPUT = (By.ID, "txtSearchResultItemFromMenu")
     SEARCH_BUTTON = (By.CSS_SELECTOR, ".global-search-btn, #btnGlobalSearch")
     ADVANCED_FILTER_BTN = (By.CSS_SELECTOR, '[onclick*="ShowAdvancedSearch"], #btnAdvancedSearch')
 
