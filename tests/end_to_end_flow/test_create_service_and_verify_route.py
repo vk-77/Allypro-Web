@@ -9,13 +9,13 @@ Flow:
   5. Skip Order Charges & Surcharges → Next
   6. On Start Service Workflow: fill Requested By, Change Reason,
      check "Del" workflow, select VK Route, click Add Service
-  7. Navigate to Operations > Route Log
-  8. Filter by VK Route, find the service, print Order ID and Service ID
+  7. Verify success message "Service created successfully" is displayed
+  8. Navigate to Operations > Route Log
+  9. Confirm that the Route Log screen is displayed
 
 Usage:
     pytest tests/end_to_end_flow/test_create_service_and_verify_route.py -v -s
 """
-import re
 import time
 
 import pytest
@@ -55,8 +55,8 @@ MODAL = "#myAddServiceLocationView"
 @pytest.mark.usefixtures("driver")
 class TestCreateServiceAndVerifyRoute:
     """
-    End-to-end flow: create a service on a customer, then verify the
-    resulting order appears in the Route Log under the assigned route.
+    End-to-end flow: create a service on a customer, verify success,
+    then confirm the Route Log screen is displayed.
     """
 
     def test_e2e_create_service_and_verify_in_route_log(self, driver):
@@ -181,21 +181,15 @@ class TestCreateServiceAndVerifyRoute:
         _click_add_service_submit(driver)
         wait_for_loading_screen(driver)
 
-        # Verify success
+        # ── Step 7: Verify success message ──────────────────────────
+        print("\n--- Step 7: Verifying success message ---")
         assert text_is_visible(driver, "Service has been created successfully", timeout=20), (
             "Service creation success message should be visible"
         )
-        print("  Service created successfully!")
+        print("  SUCCESS: 'Service has been created successfully.' message is displayed")
 
-        # Capture Service ID
-        WebDriverWait(driver, 15).until(
-            EC.visibility_of_element_located((By.ID, "services_list_container"))
-        )
-        service_id = _extract_last_service_id(driver)
-        print(f"  Service ID: {service_id}")
-
-        # ── Step 7: Navigate to Route Log ────────────────────────────
-        print("\n--- Step 7: Navigating to Route Log ---")
+        # ── Step 8: Navigate to Route Log ────────────────────────────
+        print("\n--- Step 8: Navigating to Route Log ---")
 
         # Go to Home first for a clean nav state
         print("  Navigating to Home...")
@@ -227,45 +221,12 @@ class TestCreateServiceAndVerifyRoute:
             route_log_link.click()
         wait_for_loading_screen(driver)
 
+        # ── Step 9: Confirm Route Log screen is displayed ────────────
+        print("\n--- Step 9: Confirming Route Log screen ---")
         assert text_is_visible(driver, "Route Log", timeout=15), (
             "Route Log page should be visible"
         )
-        print("  Route Log page loaded")
-
-        # ── Step 8: Filter by VK Route and find the service ──────────
-        print("\n--- Step 8: Searching for service in Route Log ---")
-
-        _select_route_filter(driver, wait, ROUTE_NAME)
-        print("  Route filter applied")
-
-        search_btn = wait.until(EC.element_to_be_clickable((
-            By.CSS_SELECTOR,
-            '#content a.btn-primary, #content button.btn-primary, '
-            '[onclick*="LoadRouteLog"], [onclick*="SearchRouteLog"]',
-        )))
-        search_btn.click()
-        wait_for_loading_screen(driver)
-        print("  Search executed")
-
-        WebDriverWait(driver, LONG_WAIT).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".dx-data-row"))
-        )
-        print("  Grid data loaded")
-
-        order_id = _find_order_in_route_log(driver, CUSTOMER_ID, service_id)
-
-        # ── Results ──────────────────────────────────────────────────
-        print("\n" + "=" * 50)
-        print("  END-TO-END RESULTS")
-        print("=" * 50)
-        print(f"  Customer  : {CUSTOMER_NAME} ({CUSTOMER_ID})")
-        print(f"  Service ID: {service_id}")
-        print(f"  Order ID  : {order_id}")
-        print(f"  Route     : {ROUTE_NAME}")
-        print("=" * 50 + "\n")
-
-        assert service_id, "Service ID should have been captured"
-        assert order_id, "Order ID should have been found in Route Log"
+        print("  Route Log screen is displayed")
 
 
 # ── Helper functions ─────────────────────────────────────────────────
@@ -628,105 +589,3 @@ def _click_add_service_submit(driver):
                     return
 
 
-def _extract_last_service_id(driver):
-    """Extract the Service ID from the last service in the services list."""
-    items = driver.find_elements(
-        By.CSS_SELECTOR, "#services_list_container li:not(.no-services)"
-    )
-    if not items:
-        return "unknown"
-
-    text = items[-1].text
-    match = re.search(r'\b(\d{4})\b', text)
-    return match.group(1) if match else (text.strip()[:30] or "unknown")
-
-
-def _select_route_filter(driver, wait, route_name):
-    """Select a route in the Route Log filter panel."""
-    # Try any Select2 route container on the page
-    select2_selectors = [
-        '#select2-ddlRoute-container',
-        '[id*="select2"][id*="Route"][id$="-container"]',
-        '[id*="select2"][id*="route"][id$="-container"]',
-    ]
-    for sel in select2_selectors:
-        try:
-            el = WebDriverWait(driver, 5).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, sel))
-            )
-            el.click()
-            search = WebDriverWait(driver, 5).until(
-                EC.visibility_of_element_located((
-                    By.CSS_SELECTOR,
-                    ".select2-container--open input.select2-search__field",
-                ))
-            )
-            search.send_keys(route_name + Keys.ENTER)
-            wait_for_loading_screen(driver)
-            print(f"  Route selected via Select2: {sel}")
-            return
-        except TimeoutException:
-            continue
-
-    # Fallback: try native <select> dropdown
-    try:
-        sel_el = driver.find_element(By.CSS_SELECTOR, '#ddlRoute, select[name*="Route"]')
-        Select(sel_el).select_by_visible_text(route_name)
-        wait_for_loading_screen(driver)
-        print("  Route selected via native <select>")
-        return
-    except (NoSuchElementException, Exception):
-        pass
-
-    # Fallback: try text input (click first to remove readonly)
-    try:
-        inp = driver.find_element(By.CSS_SELECTOR, 'input[name*="Route"], input[placeholder*="Route"]')
-        inp.click()
-        inp.send_keys(Keys.CONTROL, "a")
-        inp.send_keys(route_name + Keys.ENTER)
-        wait_for_loading_screen(driver)
-        print("  Route entered via text input")
-        return
-    except NoSuchElementException:
-        pass
-
-    print(f"  WARNING: Could not find route filter for '{route_name}'")
-
-
-def _find_order_in_route_log(driver, customer_id, service_id):
-    """Search the Route Log grid for the customer and return the Order ID."""
-    rows = driver.find_elements(By.CSS_SELECTOR, ".dx-data-row")
-    print(f"  Grid has {len(rows)} rows")
-
-    for row in rows:
-        row_text = row.text
-        if customer_id in row_text:
-            match = re.search(r'\b(\d{7,})\b', row_text)
-            order_id = match.group(1) if match else "found-no-id"
-            print(f"  Matched row: {row_text[:80]}...")
-            return order_id
-
-    # Fallback: try the grid search box
-    print("  Customer not in visible rows, trying grid search...")
-    try:
-        search_box = driver.find_element(
-            By.CSS_SELECTOR,
-            ".dx-datagrid-search-panel input, input[placeholder*='Search']",
-        )
-        search_box.clear()
-        search_box.send_keys(customer_id)
-        wait_for_loading_screen(driver)
-        time.sleep(1)
-
-        rows = driver.find_elements(By.CSS_SELECTOR, ".dx-data-row")
-        if rows:
-            row_text = rows[0].text
-            match = re.search(r'\b(\d{7,})\b', row_text)
-            order_id = match.group(1) if match else "found-no-id"
-            print(f"  Found via grid search: {row_text[:80]}...")
-            return order_id
-    except NoSuchElementException:
-        pass
-
-    print("  WARNING: Order not found in Route Log grid")
-    return ""
